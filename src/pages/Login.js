@@ -20,9 +20,7 @@ function Login() {
   const submit = async (e) => {
     try {
       const result = await axios.post("/v2/admin/signin", data);
-      console.log(result);
       const { token, expired } = result.data;
-      console.log(result.data);
       document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
       if (result?.data?.success) {
         navigate("/admin/products");

@@ -3,16 +3,15 @@ import { useEffect } from "react";
 
 function AdminProducts() {
   useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("hexToken="))
-      ?.split("=")[1];
-    axios.defaults.headers.common["Authorization"] = token;
     (async () => {
-      const productsResult = await axios.get(
-        `/v2/api/${process.env.REACT_APP_API_PATH}/admin/products/all`
-      );
-      console.log(productsResult);
+      try {
+        const productsResult = await axios.get(
+          `/v2/api/${process.env.REACT_APP_API_PATH}/admin/products/all`
+        );
+        console.log(productsResult);
+      } catch (error) {
+        console.log(error);
+      }
     })();
   }, []);
 
