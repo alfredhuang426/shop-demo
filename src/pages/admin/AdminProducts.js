@@ -18,23 +18,24 @@ function AdminProducts() {
     productModal.current = new Modal("#productModal", {
       backdrop: "static",
     });
-    (async () => {
-      try {
-        const productsResult = await axios.get(
-          `/v2/api/${process.env.REACT_APP_API_PATH}/admin/products`
-        );
-        console.log(productsResult);
-        setProducts(productsResult.data.products);
-        setPagination(productsResult.data.pagination);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
+    getProducts();
   }, []);
+
+  const getProducts = async () => {
+    try {
+      const productsResult = await axios.get(
+        `/v2/api/${process.env.REACT_APP_API_PATH}/admin/products`
+      );
+      setProducts(productsResult.data.products);
+      setPagination(productsResult.data.pagination);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
-      <ProductModal closeModal={closeModal} />
+      <ProductModal closeModal={closeModal} getProducts={getProducts} />
       <div className="p-3">
         <h3>產品列表</h3>
         <hr />
