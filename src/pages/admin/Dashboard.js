@@ -24,7 +24,6 @@ function Dashboard() {
     (async () => {
       try {
         const result = await axios.post("/v2/api/user/check");
-        console.log(result);
         if (result.data.success) {
           setIsUserValid(true);
         }
