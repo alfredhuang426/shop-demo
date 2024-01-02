@@ -1,9 +1,14 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import CouponModal from "../../components/CouponModal";
 import DeleteModal from "../../components/DeleteModal";
 import Pagination from "../../components/Pagination";
 import { Modal } from "bootstrap";
+import {
+  MessageContext,
+  handleSuccessMessage,
+  handleErrorMessage,
+} from "../../store/messageStore";
 
 function AdminCoupons() {
   const [coupons, setCoupons] = useState([]);
@@ -14,6 +19,8 @@ function AdminCoupons() {
 
   const couponModal = useRef(null);
   const deleteModal = useRef(null);
+  const [, dispatch] = useContext(MessageContext);
+
   const openModal = (type, tempCoupon) => {
     setType(type);
     setTempCoupon(tempCoupon);
@@ -35,11 +42,13 @@ function AdminCoupons() {
         `/v2/api/${process.env.REACT_APP_API_PATH}/admin/coupon/${id}`
       );
       if (result.data.success) {
+        handleSuccessMessage(dispatch, result);
         closeDeleteModal();
         getCoupons();
       }
     } catch (error) {
       console.log(error);
+      handleErrorMessage(dispatch, error);
     }
   };
   useEffect(() => {

@@ -1,5 +1,10 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import {
+  MessageContext,
+  handleSuccessMessage,
+  handleErrorMessage,
+} from "../store/messageStore";
 
 function CouponModal({ closeModal, getCoupons, type, tempCoupon }) {
   const [tempData, setTempData] = useState({
@@ -11,6 +16,7 @@ function CouponModal({ closeModal, getCoupons, type, tempCoupon }) {
   });
 
   const [date, setDate] = useState(new Date());
+  const [, dispatch] = useContext(MessageContext);
 
   useEffect(() => {
     if (type === "create") {
@@ -57,10 +63,22 @@ function CouponModal({ closeModal, getCoupons, type, tempCoupon }) {
           due_date: date.getTime(), // 轉換成 unix timestamp
         },
       });
-      closeModal();
-      getCoupons();
+      if (result.data.success) {
+        handleSuccessMessage(dispatch, result);
+        closeModal();
+        getCoupons();
+      } else {
+        handleErrorMessage(dispatch, {
+          response: {
+            data: {
+              message: result.data.message,
+            },
+          },
+        });
+      }
     } catch (error) {
       console.log(error);
+      handleErrorMessage(dispatch, error);
     }
   };
 

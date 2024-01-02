@@ -1,9 +1,14 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import ProductModal from "../../components/ProductModal";
 import DeleteModal from "../../components/DeleteModal";
 import Pagination from "../../components/Pagination";
 import { Modal } from "bootstrap";
+import {
+  MessageContext,
+  handleSuccessMessage,
+  handleErrorMessage,
+} from "../../store/messageStore";
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -14,6 +19,7 @@ function AdminProducts() {
 
   const productModal = useRef(null);
   const deleteModal = useRef(null);
+  const [, dispatch] = useContext(MessageContext);
   const openModal = (type, tempProducts) => {
     setType(type);
     setTempProducts(tempProducts);
@@ -35,11 +41,13 @@ function AdminProducts() {
         `/v2/api/${process.env.REACT_APP_API_PATH}/admin/product/${id}`
       );
       if (result.data.success) {
+        handleSuccessMessage(dispatch, result);
         closeDeleteModal();
         getProducts();
       }
     } catch (error) {
       console.log(error);
+      handleErrorMessage(dispatch, error);
     }
   };
   useEffect(() => {

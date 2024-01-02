@@ -1,10 +1,17 @@
 import { Outlet, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
+import Message from "../../components/Message";
+import {
+  MessageContext,
+  initState,
+  messageReducer,
+} from "../../store/messageStore";
 
 function Dashboard() {
   const navigate = useNavigate();
   const [isUserValid, setIsUserValid] = useState(false);
+  const reducer = useReducer(messageReducer, initState);
 
   const token = document.cookie
     .split("; ")
@@ -37,9 +44,10 @@ function Dashboard() {
   }, [navigate, token]);
 
   return (
-    <>
+    <MessageContext.Provider value={reducer}>
       {isUserValid && (
         <div>
+          <Message />
           <nav className="navbar navbar-expand-lg bg-dark">
             <div className="container-fluid">
               <p className="text-white mb-0">HEX EATS 後台管理系統</p>
@@ -106,7 +114,7 @@ function Dashboard() {
           </div>
         </div>
       )}
-    </>
+    </MessageContext.Provider>
   );
 }
 
