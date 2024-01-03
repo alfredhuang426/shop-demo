@@ -4,6 +4,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import axios from "axios";
 import "./stylesheets/all.scss";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import { HashRouter } from "react-router-dom";
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
