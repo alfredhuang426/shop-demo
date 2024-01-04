@@ -1,7 +1,42 @@
 import { useOutletContext } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
 
 function Cart() {
-  const { cartData } = useOutletContext();
+  const { cartData, getCart } = useOutletContext();
+  const [loadingItems, setLoadingItems] = useState([]);
+
+  const removeCartItem = async (id) => {
+    try {
+      const result = await axios.delete(
+        `/v2/api/${process.env.REACT_APP_API_PATH}/cart/${id}`
+      );
+      getCart();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateCartItem = async (item, quantity) => {
+    const data = {
+      data: {
+        product_id: item?.product_id,
+        qty: quantity,
+      },
+    };
+    try {
+      setLoadingItems([...loadingItems, item?.id]);
+      const result = await axios.put(
+        `/v2/api/${process.env.REACT_APP_API_PATH}/cart/${item?.id}`,
+        data
+      );
+      getCart();
+      setLoadingItems(loadingItems.filter((itemId) => itemId !== item?.id));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="container">
@@ -25,38 +60,38 @@ function Cart() {
                     }}
                   />
                   <div className="w-100 p-3 position-relative">
-                    <a
-                      href="#"
-                      className="position-absolute"
-                      style={{ top: "16px", right: "16px" }}
+                    <button
+                      type="button"
+                      className="position-absolute btn"
+                      style={{ top: "8px", right: "16px" }}
+                      onClick={() => removeCartItem(item?.id)}
                     >
                       <i className="bi bi-x-lg"></i>
-                    </a>
+                    </button>
                     <p className="mb-0 fw-bold">{item?.product?.title}</p>
                     <p className="mb-1 text-muted" style={{ fontSize: "14px" }}>
                       {item?.product?.content}
                     </p>
                     <div className="d-flex justify-content-between align-items-center w-100">
                       <div className="input-group w-50 align-items-center">
-                        <div className="input-group-prepend pe-1">
-                          <a href="#">
-                            {" "}
-                            <i className="fas fa-minus"></i>
-                          </a>
-                        </div>
-                        <input
-                          type="text"
-                          className="form-control border-0 text-center my-auto shadow-none bg-light px-0"
-                          placeholder=""
-                          aria-label="Example text with button addon"
-                          aria-describedby="button-addon1"
-                          defaultValue={item?.product?.qty}
-                        />
-                        <div className="input-group-append ps-1">
-                          <a href="#">
-                            <i className="fas fa-plus"></i>
-                          </a>
-                        </div>
+                        <select
+                          name=""
+                          className="form-select"
+                          id=""
+                          value={item?.qty}
+                          disabled={loadingItems.includes(item?.id)}
+                          onChange={(e) => {
+                            updateCartItem(item, +e.target.value);
+                          }}
+                        >
+                          {[...new Array(20)].map((_, index) => {
+                            return (
+                              <option value={index + 1} key={index}>
+                                {index + 1}
+                              </option>
+                            );
+                          })}
+                        </select>
                       </div>
                       <p className="mb-0 ms-auto">NT${item?.final_total}</p>
                     </div>
