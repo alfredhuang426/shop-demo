@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 function ProductDetail() {
   const [product, setProduct] = useState({});
   const { id } = useParams();
+  const [cartQuantity, setCartQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getProduct = async (id) => {
     try {
@@ -14,6 +16,26 @@ function ProductDetail() {
       setProduct(productResult.data.product);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const addToCart = async () => {
+    try {
+      setIsLoading(true);
+      const addToCartResult = await axios.post(
+        `/v2/api/${process.env.REACT_APP_API_PATH}/cart`,
+        {
+          data: {
+            product_id: product?.id,
+            qty: cartQuantity,
+          },
+        }
+      );
+      console.log(addToCartResult);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
     }
   };
 
@@ -46,34 +68,43 @@ function ProductDetail() {
                   className="btn btn-outline-dark rounded-0 border-0 py-3"
                   type="button"
                   id="button-addon1"
+                  onClick={() => {
+                    setCartQuantity((pre) => (pre === 1 ? pre : pre - 1));
+                  }}
                 >
-                  <i className="fas fa-minus"></i>
+                  <i className="bi bi-dash"></i>
                 </button>
               </div>
               <input
-                type="text"
+                type="number"
                 className="form-control border-0 text-center my-auto shadow-none"
                 placeholder=""
                 aria-label="Example text with button addon"
                 aria-describedby="button-addon1"
-                defaultValue="1"
+                value={cartQuantity}
+                readOnly
               />
               <div className="input-group-append">
                 <button
                   className="btn btn-outline-dark rounded-0 border-0 py-3"
                   type="button"
                   id="button-addon2"
+                  onClick={() => {
+                    setCartQuantity((pre) => pre + 1);
+                  }}
                 >
-                  <i className="fas fa-plus"></i>
+                  <i className="bi bi-plus"></i>
                 </button>
               </div>
             </div>
-            <a
-              href="./checkout.html"
-              className="btn btn-dark btn-block rounded-0 py-3"
+            <button
+              type="button"
+              className="btn btn-dark w-100 rounded-0 py-3"
+              onClick={addToCart}
+              disabled={isLoading}
             >
-              Lorem ipsum
-            </a>
+              加入購物車
+            </button>
           </div>
         </div>
       </div>
