@@ -1,12 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 
 function ProductDetail() {
   const [product, setProduct] = useState({});
   const { id } = useParams();
   const [cartQuantity, setCartQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  // 取得父層傳來的function <Outlet context={{ getCart }}></Outlet>
+  const { getCart } = useOutletContext();
 
   const getProduct = async (id) => {
     try {
@@ -33,6 +35,7 @@ function ProductDetail() {
       );
       console.log(addToCartResult);
       setIsLoading(false);
+      getCart();
     } catch (error) {
       console.log(error);
       setIsLoading(false);
