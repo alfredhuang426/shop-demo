@@ -2,20 +2,25 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Pagination from "../../components/Pagination";
 import { Link } from "react-router-dom";
+import Loading from "../../components/Loading";
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState({});
+  const [isLoading, setLoading] = useState(false);
 
   const getProducts = async (page = 1) => {
+    setLoading(true);
     try {
       const productsResult = await axios.get(
         `/v2/api/${process.env.REACT_APP_API_PATH}/products?page=${page}`
       );
       setProducts(productsResult.data.products);
       setPagination(productsResult.data.pagination);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -45,6 +50,7 @@ function Products() {
         </div>
       </nav>
       <div className="container mt-md-5 mt-3 mb-7">
+        <Loading isLoading={isLoading} />
         <div className="row">
           {products.map((product) => {
             return (
