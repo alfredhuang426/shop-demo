@@ -60,7 +60,6 @@ function Products() {
                     src={product?.imageUrl}
                     className="card-img-top rounded-0 object-cover"
                     alt="..."
-                    height={300}
                   />
                   <div className="card-body p-0">
                     <h4 className="mb-0 mt-3">
