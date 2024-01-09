@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createAsyncMessage } from "../../slice/messageSlice"
 
 function ProductDetail() {
   const [product, setProduct] = useState({});
@@ -9,6 +11,7 @@ function ProductDetail() {
   const [isLoading, setIsLoading] = useState(false);
   // 取得父層傳來的function <Outlet context={{ getCart }}></Outlet>
   const { getCart } = useOutletContext();
+  const dispatch = useDispatch();
 
   const getProduct = async (id) => {
     try {
@@ -33,12 +36,13 @@ function ProductDetail() {
           },
         }
       );
-      console.log(addToCartResult);
+      dispatch(createAsyncMessage(addToCartResult.data));
       setIsLoading(false);
       getCart();
     } catch (error) {
       console.log(error);
       setIsLoading(false);
+      dispatch(createAsyncMessage(error?.response?.data));
     }
   };
 

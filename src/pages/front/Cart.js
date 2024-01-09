@@ -2,10 +2,13 @@ import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createAsyncMessage } from "../../slice/messageSlice"
 
 function Cart() {
   const { cartData, getCart } = useOutletContext();
   const [loadingItems, setLoadingItems] = useState([]);
+  const dispatch = useDispatch();
 
   const removeCartItem = async (id) => {
     try {
@@ -33,8 +36,11 @@ function Cart() {
       );
       getCart();
       setLoadingItems(loadingItems.filter((itemId) => itemId !== item?.id));
+      dispatch(createAsyncMessage(result.data));
     } catch (error) {
       console.log(error);
+      setLoadingItems(loadingItems.filter((itemId) => itemId !== item?.id));
+      dispatch(createAsyncMessage(error?.response?.data));
     }
   };
 

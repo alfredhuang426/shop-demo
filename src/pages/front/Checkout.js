@@ -20,7 +20,6 @@ function Checkout() {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    console.log(data);
     const { name, email, tel, address } = data;
     const form = {
       data: {
@@ -37,7 +36,6 @@ function Checkout() {
         `/v2/api/${process.env.REACT_APP_API_PATH}/order`,
         form
       );
-      console.log(res);
       navigate(`/success/${res.data.orderId}`);
     } catch (error) {
       console.log(error);

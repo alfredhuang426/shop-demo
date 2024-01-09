@@ -12,7 +12,6 @@ function FrontLayout() {
       const getCartResult = await axios.get(
         `/v2/api/${process.env.REACT_APP_API_PATH}/cart`
       );
-      console.log("Cart:", getCartResult);
       setCartData(getCartResult?.data?.data);
     } catch (error) {
       console.log(error);
